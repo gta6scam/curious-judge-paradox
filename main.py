@@ -1,26 +1,27 @@
-"""Curious-judge entry: the box that is empty and full.
+"""Curious Judge entry: a paradox in one small box, handed to the reader as plain text."""
 
-Angle: PARADOX / logic puzzle. A calm paradox in plain concrete words: a box that is both empty and full, and the sentence itself becomes the last thing to open. The reader keeps asking which claim gives way — and neither does.
-
-Writes the single curiosity text to $MAKEFUN_OUTPUT_DIR/entry.txt
-(UTF-8, byte-identical on every run), with no dependencies and no network.
-The output directory comes from the environment, as the harness requires;
-"/output" is only the local fallback when the variable is unset.
-"""
-
-TEXT = 'The box is empty. The box is full. Both are true — and the only thing left to open is the sentence holding them.'
+import os
 
 
-def main() -> None:
-    import os
+def build_sentence():
+    pieces = (
+        "The box is empty. The box is full.",
+        "Both are true \u2014 and the only thing left to open is the sentence holding them.",
+    )
+    return " ".join(pieces)
 
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
-    os.makedirs(out_dir, exist_ok=True)
-    # newline="" keeps the write byte-exact: no platform line-ending
-    # translation is applied, so entry.txt contains TEXT and nothing else.
-    with open(os.path.join(out_dir, "entry.txt"), "w",
-              encoding="utf-8", newline="") as f:
-        f.write(TEXT)
+
+def destination_folder():
+    return os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+
+
+def main():
+    line = build_sentence()
+    folder = destination_folder()
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, "entry.txt")
+    with open(target, "w", encoding="utf-8", newline="") as handle:
+        handle.write(line)
 
 
 if __name__ == "__main__":
